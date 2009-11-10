@@ -55,9 +55,12 @@ class UnregisteredName(InvalidSyntax):
         InvalidSyntax.__init__(self, lineno, 'Unregistered name: %r' % name)
 
 
-class GroupExpectsNoValue(InvalidSyntax):
-    def __init__(self, lineno, name):
-        InvalidSyntax.__init__(self, lineno, 'Group expects no value: %r' % name)
+class GroupExpectsNoValue(Exception):
+    def __init__(self, name):
+        self.name = name
+
+    def __str__(self):
+        return 'Group expects no value: %r' % self.name
 
 
 def wrap(comment):
@@ -181,7 +184,7 @@ class Group(object):
                 except KeyError:
                     raise UnregisteredName(lineno, name)
             if not group.expectsValue():
-                raise GroupExpectsNoValue(lineno, name)
+                raise InvalidSyntax(lineno, '%s expects no value' % name)
             group.setFromString(value)
 
     def read(self, filename):
