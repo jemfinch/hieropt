@@ -78,9 +78,16 @@ def OptparseCallback(option, optString, valueString, parser, Value):
                                (optString, Value.type(), valueString, e))
         
 
+class IgnoreValue(object):
+    """Used non-strict Groups to ignore the value in readfp."""
+    def expectsValue(self):
+        return True
+    def setFromString(self, s):
+        return
+
 class Group(object):
     """All configuration variables are groups, that is, all configuration variables can have other groups and variables registered under them.  Experience (from the very similar configuration in Supybot) has shown that making non-group variables is simply not worth the trouble and inconsistency."""
-    def __init__(self, name, comment=None, Child=None):
+    def __init__(self, name, comment=None, Child=None, strict=True):
         """
         @param name: The name for this group.  An argument could be made for making the group itself name-agnostic and only giving it a name upon registration with another group, but that would cripple unregistered groups.
 
@@ -95,6 +102,7 @@ class Group(object):
         self._name = name
         self._parent = None
         self._Child = Child
+        self._strict = strict
         self._comment = comment
         self._children = OrderedDict()
 
@@ -176,12 +184,16 @@ class Group(object):
             value = value.strip()
             parts = name.split('.')
             if parts.pop(0) != self._name:
+                if not self._strict:
+                    continue # Just ignore other names.
                 raise UnregisteredName(lineno, name)
             group = self
             for part in parts:
                 try:
                     group = group.get(part)
                 except KeyError:
+                    if not self._strict:
+                        group = IgnoreValue()
                     raise UnregisteredName(lineno, name)
             if not group.expectsValue():
                 raise InvalidSyntax(lineno, '%s expects no value' % name)

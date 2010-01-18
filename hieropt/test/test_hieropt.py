@@ -36,29 +36,29 @@ from cStringIO import StringIO as sio
 import hieropt
 from hieropt.test import *
 
-def makeSimple():
-    simple = hieropt.Group('simple')
+def makeSimple(**kwargs):
+    simple = hieropt.Group('simple', **kwargs)
     simple.register(hieropt.Int('int'))
     simple.register(hieropt.Bool('bool'))
     simple.register(hieropt.Float('float'))
     return simple
 
-def makeSimpleWithDefaults():
-    simple = hieropt.Group('simple')
+def makeSimpleWithDefaults(**kwargs):
+    simple = hieropt.Group('simple', **kwargs)
     simple.register(hieropt.Int('int', 1))
     simple.register(hieropt.Bool('bool', True))
     simple.register(hieropt.Float('float', 1.0))
     return simple
 
-def makeSimpleWithComments():
-    simple = hieropt.Group('simple', comment='simple group')
+def makeSimpleWithComments(**kwargs):
+    simple = hieropt.Group('simple', comment='simple group', **kwargs)
     simple.register(hieropt.Int('int', comment='simple int'))
     simple.register(hieropt.Bool('bool', comment='simple bool'))
     simple.register(hieropt.Float('float', comment='simple float'))
     return simple
     
-def makeSimpleWithDefaultsAndComments():
-    simple = hieropt.Group('simple', comment='simple group')
+def makeSimpleWithDefaultsAndComments(**kwargs):
+    simple = hieropt.Group('simple', comment='simple group', **kwargs)
     simple.register(hieropt.Int('int', 1, comment='simple int'))
     simple.register(hieropt.Bool('bool', True, comment='simple bool'))
     simple.register(hieropt.Float('float', 1.0, comment='simple float'))
@@ -387,4 +387,16 @@ def test_deepcopy():
     assert_equals(simple2.int(), 1)
     assert_equals(simple2.int.x(), 2)
     assert_equals(simple2.int.x.y(), 3)
-    
+
+def test_nonstrict():
+    s = """
+simple.int: 1
+simple.float: 2.0
+notsimple.somethingelse: True
+""".strip()
+    simple = makeSimple()
+    assert_raises(hieropt.UnregisteredName, simple.readfp, sio(s))
+    simple = makeSimple(strict=False)
+    simple.readfp(sio(s))
+    assert_equals(simple.int(), 1)
+    assert_equals(simple.float(), 2.0)
