@@ -39,7 +39,7 @@ setup(
     author = 'Jeremy Fincher',
     author_email = 'jemfinch@finchers.us',
     description = """Simple, hierarchical configuration, able to read configuration
-    values from file, command line options, and environement variables.""",
+    values from file, command line options, and environment variables.""",
     license = 'BSD',
     keywords = 'hierarchical configuration options',
     test_suite = 'nose.collector',
