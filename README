@@ -1,0 +1,30 @@
+Hieropt is a simple, hierarchical configuration library.
+
+Simplicity is important because complex configuration is rarely worth
+the time.  Hieropt supports a simple file format: "name: value" or
+"name = value", with whole-line comments beginning with "#".  Basic
+types String (hieropt.Value), Bool, Int, and Float are provided, but
+users can provide their own types to convert raw strings to typed
+Python values.
+
+Hierarchicality is useful because it allows modules to define their
+own hieropt configuration which can then be easily integrated into an
+application's hieropt configuration with one method call.  Two
+applications using hieropt can be joined into one umbrella application
+with ease.  In short, hieropt configurations are *composable*, which
+is important for the development of modular software.
+
+Hieropt groups can read configuration values from files and from
+environment variables directly; it can also produce or modify an
+optparse parser to accept configuration values on the command line as
+well.
+
+Hieropt supports the documentation of configuration variables and
+groups for creating annotated configuration files and providing
+command-line help.
+
+For a usage example, see conf.py in the finitd project: 
+http://github.com/jemfinch/finitd/blob/master/finitd/conf.py  In that
+file you can see some user-defined types and the basic way to use the
+library (defining a module/app-level group, then registering values
+with it.
