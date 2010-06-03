@@ -28,3 +28,5 @@ http://github.com/jemfinch/finitd/blob/master/finitd/conf.py  In that
 file you can see some user-defined types and the basic way to use the
 library (defining a module/app-level group, then registering values
 with it.
+
+See the docstrings for better API documentation.
